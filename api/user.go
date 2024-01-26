@@ -4,17 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/jacobbeck/currency-converter/pkg/user"
 )
 
-// User represents a user with a balance
-type User struct {
-	ID      string
-	Name    string
-	Balance float64
-}
-
 // Database storing user balances
-var userDB = map[string]User{
+var userDB = map[string] user.User{
 	"1": {ID: "1", Name: "Alice", Balance: 100.0},
 	"2": {ID: "2", Name: "Bob", Balance: 50.0},
 	// Add more users as needed

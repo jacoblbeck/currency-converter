@@ -1,4 +1,7 @@
-.PHONY: run
+.PHONY: start
+start:
+	docker compose up -d
 
-run:
-	go run cmd/main.go
+.PHONY: stop
+stop:
+	docker compose down

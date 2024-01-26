@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  billing-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.billing
+    ports:
+      - "8080:8080"
+  converter-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.converter
+    ports:
+      - "8081:8081"
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: billing-db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
