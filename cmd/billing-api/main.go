@@ -1,11 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
 	"github.com/gin-gonic/gin"
@@ -34,6 +34,7 @@ func main() {
 	r.engine.Use(api.UserMiddleware(*userService))
 
 	// Define routes
+	r.engine.GET("/users", api.GetUsersHandler)
 	r.engine.GET("/users/:id/balance", api.GetUserBalanceHandler)
 	r.engine.POST("/users", api.CreateUserHandler)
 
@@ -44,7 +45,7 @@ func main() {
 }
 
 
-func connectToDB() *sql.DB {
+func connectToDB() *sqlx.DB {
 	host     := os.Getenv("PG_HOST")
 	port     := 5432
 	user     := os.Getenv("PG_USER")
@@ -54,7 +55,7 @@ func connectToDB() *sql.DB {
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	// Open a database connection
-	db, err := sql.Open("postgres", connStr)
+	db, err := sqlx.Connect("postgres", connStr)
 	if err != nil {
 		log.Fatal("Error connecting to the database:", err)
 	}
@@ -70,7 +71,7 @@ func connectToDB() *sql.DB {
 	return db
 }
 
-func initDB(db *sql.DB) {
+func initDB(db *sqlx.DB) {
 	const (
 		createUserTable = `
 		CREATE TABLE IF NOT EXISTS users (

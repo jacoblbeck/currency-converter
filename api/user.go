@@ -36,6 +36,24 @@ func GetUserBalanceHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"balance": balance})
 }
 
+func GetUsersHandler(c *gin.Context) {
+	userService, exists := c.Get("userService")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user type in context"})
+		return
+	}
+
+	us, _ := userService.(user.Service)
+
+	users, err := us.GetUsers()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return	
+	}
+
+	c.JSON(http.StatusOK, users)
+}
+
 func CreateUserHandler(c *gin.Context) {
 	userService, exists := c.Get("userService")
 	if !exists {
