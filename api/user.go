@@ -18,6 +18,7 @@ var userDB = map[string] user.User{
 
 // getUserBalance returns the balance of a user given their ID
 func GetUserBalance(userID string) (float64, bool) {
+	
 	user, ok := userDB[userID]
 	if !ok {
 		return 0, false
@@ -27,12 +28,23 @@ func GetUserBalance(userID string) (float64, bool) {
 
 // GetUserBalanceHandler is a handler function to get a user's balance
 func GetUserBalanceHandler(c *gin.Context) {
+	userService, exists := c.Get("userService")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user type in context"})
+		return
+	}
+
+	us, _ := userService.(user.Service)
+
 	userID := c.Param("id")
-	balance, ok := GetUserBalance(userID)
-	if !ok {
+
+	balance, err := us.GetUserBalance(userID)
+	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+	
 	c.JSON(http.StatusOK, gin.H{"balance": balance})
 }
 
@@ -73,7 +85,6 @@ func CreateUserHandler(c *gin.Context) {
 	
 	newUser, err := us.CreateUser(&u)
 	if err != nil {
-		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, err)
 	}
 

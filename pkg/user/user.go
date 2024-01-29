@@ -18,8 +18,14 @@ const (
 		INSERT INTO	users (id, name, balance) VALUES ($1, $2, $3)`
 
 	sqlGetUsers = `
-	Select id, name
+	SELECT id, name
 	FROM users
+	`
+
+	sqlGetUserBalance = `
+	SELECT balance
+	FROM users
+	WHERE ID = $1
 	`
 )
 
@@ -30,11 +36,6 @@ type Service struct {
 func NewService(db *sqlx.DB) *Service {
 	return &Service{db: db}
 }
-
-func (s *Service) GetUser(userID int) {
-
-}
-
 
 // CreateUser creates a new user in the database from the given API endpoint
 func(s *Service) CreateUser(u *User) (*User, error) {
@@ -59,4 +60,16 @@ func (s *Service) GetUsers() (*[]User, error) {
 	}
 
 	return &users, nil
+}
+
+//GetUserBalance gets the balance of a user
+func (s *Service) GetUserBalance(userID string) (string, error) {
+	var balance string
+
+	err := s.db.Get(&balance, sqlGetUserBalance, userID)
+	if err != nil {
+		return "", err
+	}
+
+	return balance, nil
 }
