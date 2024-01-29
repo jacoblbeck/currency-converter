@@ -25,7 +25,7 @@ func GetUserBalance(userID string) (float64, bool) {
 	return user.Balance, true
 }
 
-// getUserBalanceHandler is a handler function to get a user's balance
+// GetUserBalanceHandler is a handler function to get a user's balance
 func GetUserBalanceHandler(c *gin.Context) {
 	userID := c.Param("id")
 	balance, ok := GetUserBalance(userID)
@@ -36,6 +36,7 @@ func GetUserBalanceHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"balance": balance})
 }
 
+// GetUsersHandler handles the requests for the /users endpoint
 func GetUsersHandler(c *gin.Context) {
 	userService, exists := c.Get("userService")
 	if !exists {
@@ -54,6 +55,7 @@ func GetUsersHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+//CreateUserHandler handles the requests for the POST /users endpoint
 func CreateUserHandler(c *gin.Context) {
 	userService, exists := c.Get("userService")
 	if !exists {
@@ -79,7 +81,7 @@ func CreateUserHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, newUser)
 }
 
-
+// UserMiddleWare adds the userService to the context of given api requests
 func UserMiddleware(userService user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set("userService", userService)

@@ -9,8 +9,8 @@ import (
 // User represents a user with a balance
 type User struct {
 	ID      string `sql:"id"`
-	Name    string  `json:"name", sql:"name"`
-	Balance float64 `json:"balance,omitempty", sql:"balance,omitempty"`
+	Name    string  `json:"name" sql:"name"`
+	Balance float64 `json:"balance,omitempty" sql:"balance,omitempty"`
 }	
 
 const (
@@ -22,7 +22,6 @@ const (
 	FROM users
 	`
 )
-
 
 type Service struct {
 	db *sqlx.DB
@@ -36,6 +35,8 @@ func (s *Service) GetUser(userID int) {
 
 }
 
+
+// CreateUser creates a new user in the database from the given API endpoint
 func(s *Service) CreateUser(u *User) (*User, error) {
 	uuid := uuid.New()
 
@@ -49,6 +50,7 @@ func(s *Service) CreateUser(u *User) (*User, error) {
 	return u, nil
 }
 
+// GetUsers returns all users with their ID and Name, but no balance
 func (s *Service) GetUsers() (*[]User, error) {
 	var users []User
 	err := s.db.Select(&users, sqlGetUsers)
